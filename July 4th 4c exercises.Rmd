@@ -1,0 +1,75 @@
+---
+title: "July 4th 4c exercises"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r, echo = TRUE, results = 'hide' }
+#exercises for 4c
+#Question 1 Normalizing, Transforming, and the QQ plot 
+
+library(datasets)
+ChickWeight
+hist((ChickWeight$weight), xlab = 'Weight', main = paste("Histogram of Chicken Weight"))
+#looks like the graph is skewed right (positive) 
+#?scale
+Scaled_Chicken_Weight <- scale(ChickWeight$weight, center = TRUE, scale = TRUE)
+hist(Scaled_Chicken_Weight)
+#the graph shows more bars that describe the relationship on a smaller axis length. The data points are cloer together for reference
+#and the data points lie in tails on either side of the reference line
+
+qqnorm(ChickWeight$weight)
+qqline(ChickWeight$weight)
+qqnorm(Scaled_Chicken_Weight)
+qqline(Scaled_Chicken_Weight)
+
+#the two graphs are not different because the skewed data is corrected in the quartile-quartile graph
+chickweighttrans <- data.frame(transform(ChickWeight$weight, logofweight = log(ChickWeight$weight)))
+qqnorm(chickweighttrans$logofweight)
+qqline(chickweighttrans$logofweight)
+
+sqrtchickweight <- data.frame(transform(ChickWeight$weight, sqrtofweight = sqrt(ChickWeight$weight)))
+qqnorm(sqrtchickweight$sqrtofweight)
+qqline(sqrtchickweight$sqrtofweight)
+#the quartile-quartile plots are closer to the qqline, meaning reduced skewness
+#install.packages('caret')
+library(caret)
+#install.packages('e1071')
+library(e1071)
+boxcox = BoxCoxTrans(ChickWeight$weight)
+qqnorm(predict(boxcox, ChickWeight$weight))
+qqline(predict(boxcox, ChickWeight$weight))
+#This looks very similar to the sqrt and the log quartile-quartile graphs that showed reduced skewness
+
+#Question 2
+numb <- rnorm(1000, mean = 0, sd = 0.5)
+qqnorm(numb)
+qqline(numb)
+exp <- rexp(1000, 10)
+qqnorm(exp)
+qqline(exp)
+
+
+new <- log(exp)
+qqnorm(new)
+qqline(new)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
